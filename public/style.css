@@ -197,3 +197,26 @@ nav button{border-bottom-width:4px}nav button em{filter:grayscale(1) brightness(
 nav i{width:8px;height:8px}.slots i{width:10px;height:10px}
 #fish{background:#06121af2}#ftrack{border:3px solid #02070a}#fmark{width:8px}
 @media(hover:none){.btn:not(.ghost):hover{background:var(--deep)}}
+
+/* ═════════ v1.5 — 아이콘 없는 텍스트 UI · 골목살림도 같은 스타일 · 행동 탭 새 배치 ═════════ */
+em:empty,.ai:empty,.sun{display:none}
+nav button{min-height:44px;justify-content:center}
+/* 행동 탭: 장소 칩(가로) + 바로 아래 행동 목록 */
+.locbar{display:flex;gap:6px;overflow-x:auto;margin:0 0 12px;padding:2px 2px 8px;-webkit-overflow-scrolling:touch}
+.lt{flex:none;min-height:46px;min-width:76px;padding:4px 14px;background:var(--bg2);border:3px solid var(--line);color:var(--mu);cursor:pointer;text-align:center}
+.lt small{display:block;font-size:11px;line-height:1.2}.lt.on{background:var(--deep);border-color:var(--ac2);color:#fff}.lt.on small{color:var(--ac2)}
+#acts{display:flex;flex-direction:column;gap:2px}.act{min-height:58px;margin:4px 0}
+.chip{border:2px solid var(--line);padding:0 6px}
+/* 골목살림: 다른 탭과 같은 색·프레임 */
+#p-life{background:none}#life{color:var(--tx)}#life small{color:var(--mu);opacity:1}
+.sky,.pl,.zone,.shop,.st-b,.shp,.hotbar{border-image:var(--fc) 3/6px!important}
+.sky,.t0 .sky,.t2 .sky,.t3 .sky{height:auto;display:flex;justify-content:space-between;padding:8px 12px;background:var(--bg2);color:var(--ac2)}
+.wx,.dy{position:static}.wave,.fsh{display:none}.zone,.t0 .zone,.t2 .zone,.t3 .zone{filter:none}
+.pl,.shop,.hotbar,.pond,.field,.st-b,.shp{background:var(--bg2)}.pl.self{background:var(--card)}
+.pond{height:84px}.field{padding:12px}
+.plot{background:var(--card);box-shadow:none;font-size:13px;color:var(--tx);height:52px;border:2px solid var(--line)}.plot.empty{font-size:0}.plot.ready{background:var(--deep);border-color:var(--ac2)}
+.lb{background:#02070acc;color:var(--tx)}.farm .wait{background:var(--bg2);border:2px dashed var(--ac);color:var(--ac2)}
+.st-b,.shp{box-shadow:none;min-height:64px}.shp{min-height:56px}
+.plan{background:var(--bg2)}.plan select{background:var(--bg2);color:var(--tx);border:3px solid transparent;border-image:var(--fc) 3/3px}
+.hotbar{gap:6px}.hs{flex:1;max-width:none;aspect-ratio:auto;flex-direction:column;padding:4px 2px;background:var(--card);box-shadow:none}
+.hs em{font-size:11px;color:var(--mu)}.hs b{position:static;font-size:16px;color:var(--tx);text-shadow:none}
