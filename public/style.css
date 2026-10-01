@@ -224,3 +224,9 @@ nav button{min-height:44px;justify-content:center}
 /* v1.6 — 새 도트 아이콘 (외곽선·3톤 음영) */
 .lt{display:flex;flex-direction:column;align-items:center;justify-content:center}.lt .px{width:32px;height:32px;vertical-align:top}.lt:not(.on) .px{opacity:.8}
 nav button em .px{filter:none}
+
+/* v1.7 — 오늘의 일과 (행동 탭) */
+.plan2{margin:0 0 12px}.pt{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:6px}.pt b{font-weight:500;color:var(--ac2)}
+.pchips{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 6px;-webkit-overflow-scrolling:touch}
+.pc{flex:none;min-height:40px;padding:2px 12px;background:var(--bg2);border:3px solid var(--line);color:var(--mu);cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.pc.on{background:var(--deep);border-color:var(--ac2);color:#fff}
