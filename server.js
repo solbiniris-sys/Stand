@@ -76,7 +76,17 @@ const act = (r, k, a) => {
   return r.p[k].st[L[0]] >= L[1] ? 1 : `${L[0]} ${L[1]} 필요`;
 };
 const avail = (r, k) => { const o = {}; for (const l in D.loc) { const L = D.loc[l]; if (L.ch && !L.ch.includes(r.ch)) continue; const v = L.a.map(a => act(r, k, a)); if (v.some(x => x)) o[l] = v; } return o; };
-const tx = t => (Array.isArray(t) ? pk(t) : t); // 문장이 배열이면 무작위로 하나
+
+// [수정됨] 캐릭터, 장(chapter) 정보를 받아 우선순위에 따라 지문을 뽑습니다.
+const tx = (t, k, ch) => {
+  let v = t;
+  if (typeof v === 'object' && v !== null && !Array.isArray(v)) {
+    const phase = ch < 2 ? 'A' : 'B'; 
+    v = v[k + ch] || v[k + phase] || v[k] || v['_'] || v['default'] || "지문이 없습니다.";
+  }
+  return Array.isArray(v) ? pk(v) : v;
+};
+
 const roll = (mod, dc) => { const d = rand(20), tot = d + mod, ok = d === 20 || (d > 1 && tot >= dc); return { d, mod, tot, ok, res: d === 20 ? '대성공' : d === 1 ? '대실패' : ok ? '성공' : '실패' }; };
 
 function setB(r, d) {
@@ -141,8 +151,11 @@ function resolve(c) {
     let run = 0; for (let j = h.length - 1; j >= 0 && h[j] === key; j--) run++; // 같은 일을 몇 번째 연속으로 하는지
     const nov = h.includes(key) ? 0 : 1, note = nov ? '\n(오랜만의 새로운 일이라 손끝이 가볍다. 판정 +1)' : run >= 2 ? '\n(같은 일을 거듭해 몸이 먼저 움직인다. 얻는 것이 적다.)' : '';
     r.tried[l + ':' + a[0]] = (r.tried[l + ':' + a[0]] | 0) + 1; // 이 방에서 해 본 행동 기록 (사건 해금용)
-    if (a[1] === 'rest') { p.en = Math.min(8, p.en + a[3]); add(r, 'roll', `${D.loc[l].n} / ${NM[k]} - ${a[0]}\n` + withName(tx(a[4]), k)); continue; }
-    const dc = a[2] + wd(r, l), x = roll(p.st[a[1]] + p.boost + nov, dc), text = withName(tx(x.ok ? a[4] : a[5]), k) + note;
+    
+    // [수정됨] 행동(휴식) 및 성공/실패 시 지문 출력에 tx(.., k, r.ch) 반영
+    if (a[1] === 'rest') { p.en = Math.min(8, p.en + a[3]); add(r, 'roll', `${D.loc[l].n} / ${NM[k]} - ${a[0]}\n` + withName(tx(a[4], k, r.ch), k)); continue; }
+    const dc = a[2] + wd(r, l), x = roll(p.st[a[1]] + p.boost + nov, dc), text = withName(tx(x.ok ? a[4] : a[5], k, r.ch), k) + note;
+    
     p.boost = 0; p.en = Math.max(0, p.en - a[3]); h.push(key); if (h.length > 8) h.shift();
     grow(r, k, a[1], run >= 2 ? 0 : (x.ok ? 2 : 1) + (nov && x.ok ? 1 : 0));
     if (x.ok) { p.money += a[6] || 0; if (Math.random() < 0.3) r.mem++; }
@@ -237,7 +250,9 @@ function onMessage(ws, raw) {
       setB(r, (x.ok ? o[5] : o[6]) + (x.d === 20 ? 1 : 0)); r.mem++;
       r.album.push({ ch: r.ch, day: r.day, t: `${fill(e.title)} / ${NM[me]} - ${fill(o[0])} (${x.res})` });
       grow(r, me, o[1], 2);
-      const t = fill(x.ok ? o[3] : o[4]);
+      
+      // [수정됨] 이벤트 내 선택지에도 캐릭터별 지문을 지원하도록 수정
+      const t = withName(tx(x.ok ? o[3] : o[4], me, r.ch), me);
       add(r, 'roll', `${NM[me]} - ${fill(o[0])} (${o[1]} d20=${x.d}+${x.mod}=${x.tot} 난이도 ${o[2]} ${x.res})\n${t}`);
       r.ev = null;
       bc(c, { type: 'roll', rolls: [{ who: me, d: x.d, mod: x.mod, dc: o[2], res: x.res, title: `${fill(e.title)}: ${fill(o[0])}`, stat: o[1], t }] });
@@ -275,7 +290,7 @@ function onMessage(ws, raw) {
       if (r.pick[me]) return tell(ws, '골라 둔 행동이 있어요. 상대를 기다리는 중이에요.');
       const [name, days] = D.crops[D.month[r.ch]];
       if (p.en < 1) return tell(ws, '행동력이 없어요.');
-      if (!r.crop) { p.en--; r.crop = r.day; add(r, 'sys', fill(`${NM[me]}이(가) 골목 텃밭에 ${name} 씨앗을 심었다.`)); }
+      if (!r.crop) { p.en--; r.crop = r.day; add(r, 'sys', fill(`${NM[me]}이(가) 골목 텃밭에 ${name} 씨앗 심었다.`)); }
       else if (r.day - r.crop >= days) { p.en--; r.inv.crop += 2; r.crop = 0; grow(r, me, '체력', 1); add(r, 'sys', fill(`${NM[me]}이(가) 텃밭 작물을 수확했다. (${name} +2)`)); }
       else return tell(ws, `${name}이(가) 아직 자라는 중이에요. (${r.day - r.crop}/${days}일)`);
       break;
