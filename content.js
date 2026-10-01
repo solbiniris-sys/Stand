@@ -69,12 +69,11 @@ module.exports = D => {
   L(3, '첫 요리 수업', { loc: 'shop' });
 
   // ── 장별 신규 파일 (ch1a, ch1b, ch2a ...) ──
-  for (let n = 1; n <= 4; n++) for (const s of 'abcdef') {
-    const f = path.join(__dirname, `ch${n}${s}.js`);
-    if (!fs.existsSync(f)) continue;
-    const ch = n - 1;
-    require(f)(D, { M: (...a) => add(ch, 1, ...a), m: (...a) => add(ch, 0, ...a), o, patch: (t, meta) => patch(ch, t, meta) });
-  }
+  // 폴더를 훑어 ch1a, ch1b, ch1x ... 처럼 ch[1-4][소문자 한 글자].js 를 모두 읽는다 (글자 순서대로)
+  fs.readdirSync(__dirname).filter(f => /^ch[1-4][a-z]\.js$/.test(f)).sort().forEach(file => {
+    const ch = Number(file[2]) - 1;
+    require(path.join(__dirname, file))(D, { M: (...a) => add(ch, 1, ...a), m: (...a) => add(ch, 0, ...a), o, patch: (t, meta) => patch(ch, t, meta) });
+  });
 
   // ── 성장 연동 신규 파일 (grow1.js ~ grow4.js) — try:['장소:행동'] / st:['능력치',n] 조건을 쓸 수 있다 ──
   for (let n = 1; n <= 4; n++) {
@@ -84,9 +83,18 @@ module.exports = D => {
     require(f)(D, { M: (...a) => add(ch, 1, ...a), m: (...a) => add(ch, 0, ...a), o, patch: (t, meta) => patch(ch, t, meta) });
   }
 
+  // ── 로맨틱 사건 신규 파일 (rom2.js ~ rom4.js) — 엔딩(romance.js)이 세는 rom:1 사건들 ──
+  for (let n = 1; n <= 4; n++) {
+    const f = path.join(__dirname, `rom${n}.js`);
+    if (!fs.existsSync(f)) continue;
+    const ch = n - 1;
+    require(f)(D, { M: (...a) => add(ch, 1, ...a), m: (...a) => add(ch, 0, ...a), o, patch: (t, meta) => patch(ch, t, meta) });
+  }
+
   // ── 마무리: id 부여, 선행 조건 해석, 기본값 ──
   D.events.forEach((list, ch) => list.forEach(e => (e.id = `${e.ch}:${e.title}`)));
   const all = D.events.flat();
+  const seenId = new Set(); all.forEach(e => { if (seenId.has(e.id)) console.warn(`[content] 이벤트 id 중복: ${e.id}`); seenId.add(e.id); });
   const findId = (ch, t) => (all.find(x => x.ch === ch && x.title === t) || all.find(x => x.title === t) || {}).id;
   all.forEach(e => {
     if (e.need) e.need = e.need.map(t => findId(e.ch, t) || (() => { throw new Error(`need 를 찾을 수 없음: '${e.title}' → '${t}'`); })());
