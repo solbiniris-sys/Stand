@@ -2,27 +2,27 @@
 /* 16×16 도트 아이콘 — 각 줄: "색 x y 너비 높이" (색 글자는 PAL 참고, C=글자색) */
 const PAL={k:'#0f1b24',w:'#f6f3ea',g:'#8a99a3',d:'#55646e',l:'#c7d5dd',b:'#4ba3d6',B:'#2b6a9c',c:'#9fe3f1',r:'#e8604c',R:'#a63a36',o:'#f2a33f',O:'#c4701f',y:'#ffd45e',Y:'#c9962e',n:'#9a6535',N:'#603c1e',G:'#62cf7a',D:'#2f7d4a',p:'#f58fb4',v:'#8a6bb8',m:'#5d3f85',s:'#f4c9a0',C:'currentColor'};
 const PX={
-chat:'k 2 2 12 1;k 1 3 1 7;k 14 3 1 7;k 2 10 12 1;w 2 3 12 7;k 4 11 3 1;k 4 12 1 1;b 4 6 2 2;b 7 6 2 2;b 10 6 2 2',
-compass:'w 5 2 6 12;w 3 3 10 10;w 2 5 12 6;k 5 1 6 1;k 5 14 6 1;k 1 5 1 6;k 14 5 1 6;k 3 2 2 1;k 11 2 2 1;k 3 13 2 1;k 11 13 2 1;k 2 3 1 2;k 13 3 1 2;k 2 11 1 2;k 13 11 1 2;r 10 4 1 1;r 9 5 1 1;r 8 6 1 1;k 7 7 2 2;b 6 9 1 1;b 5 10 1 1;b 4 11 1 1',
-sprout:'D 7 7 2 7;G 3 4 4 3;D 3 7 4 1;G 9 2 4 4;D 9 6 4 1;n 3 13 10 2;N 3 14 10 1',
+chat:'w 2 3 12 7;l 2 9 12 1;b 4 5 2 2;b 7 5 2 2;b 10 5 2 2;w 4 10 3 1;w 4 11 2 1;w 4 12 1 1',
+compass:'w 5 2 6 12;w 4 3 8 10;w 3 4 10 8;w 2 5 12 6;l 3 11 10 1;l 4 12 8 1;l 5 13 6 1;r 7 3 2 2;r 6 5 4 2;B 6 9 4 2;b 7 11 2 2;d 7 7 2 2',
+sprout:'G 3 6 4 3;D 3 8 4 1;G 9 4 4 3;D 9 6 4 1;D 7 6 2 6;n 3 11 10 3;N 3 13 10 1;s 4 11 3 1',
 leaf:'D 7 5 2 9;G 3 2 4 4;G 9 1 4 4;G 3 7 4 3;G 9 6 4 3;n 4 13 8 2',
-cup:'w 3 6 8 7;k 3 5 8 1;k 2 6 1 7;k 11 6 1 7;k 3 13 8 1;n 3 6 8 2;k 12 7 2 1;k 14 8 1 3;k 12 11 2 1;l 5 2 1 2;l 8 1 1 3',
-book:'n 2 2 12 12;N 2 2 3 12;k 1 1 14 1;k 1 14 14 1;k 1 2 1 12;k 14 2 1 12;w 6 4 6 1;w 6 6 6 1;w 6 8 4 1;r 10 11 2 3',
-street:'r 7 2 2 1;r 5 3 6 1;r 3 4 10 1;r 2 5 12 1;R 2 6 12 1;w 3 7 10 6;k 3 13 10 1;n 7 9 2 4;c 4 8 2 2;c 10 8 2 2',
-sea:'y 11 1 3 3;b 1 5 14 9;B 1 9 14 5;w 3 7 3 1;w 9 7 3 1;w 6 11 3 1;w 11 11 2 1',
-river:'G 1 2 14 12;D 1 2 2 12;b 6 2 4 4;b 7 6 4 3;b 8 9 4 3;b 9 12 4 2;w 7 3 1 1;w 9 7 1 1',
-pool:'b 1 3 14 11;B 1 11 14 3;g 10 1 1 7;g 13 1 1 7;g 10 3 4 1;g 10 5 4 1;w 2 6 4 1;w 6 8 4 1;w 2 10 4 1',
-shop:'o 3 5 10 3;r 5 5 1 3;r 8 5 1 3;r 11 5 1 3;k 7 5 2 7;w 3 8 4 4;w 9 8 4 4;g 3 12 10 1',
-school:'R 1 4 14 2;r 3 3 10 1;w 6 1 4 2;w 2 6 12 7;b 4 8 2 2;b 10 8 2 2;n 7 9 2 4;k 2 13 12 1',
-town:'g 3 2 10 12;d 3 2 10 1;c 5 4 2 2;c 9 4 2 2;c 5 7 2 2;c 9 7 2 2;r 2 9 12 1;n 6 10 4 4;k 3 14 10 1',
-pin:'r 6 2 4 1;r 5 3 6 4;r 6 7 4 1;r 7 8 2 3;k 7 4 2 2;k 7 11 2 1;g 5 13 6 1',
-str:'d 1 6 2 4;d 13 6 2 4;g 3 5 2 6;g 11 5 2 6;k 5 7 6 2;w 3 6 1 2',
-rock:'g 4 4 8 1;g 3 5 10 8;d 3 11 10 2;d 11 6 2 5;w 5 6 3 1;w 4 7 1 1',
-heart:'p 3 3 3 1;p 10 3 3 1;p 2 4 5 1;p 9 4 5 1;p 2 5 12 2;p 3 7 10 1;p 4 8 8 1;p 5 9 6 1;r 6 10 4 1;r 7 11 2 1;w 4 4 1 2',
-bulb:'y 5 2 6 1;y 4 3 8 5;y 5 8 6 1;g 6 9 4 2;d 6 11 4 1;k 7 12 2 1;w 5 4 1 2',
-eye:'k 4 4 8 1;k 2 5 2 1;k 12 5 2 1;k 1 6 1 4;k 14 6 1 4;k 2 10 2 1;k 12 10 2 1;k 4 11 8 1;w 4 5 8 6;w 2 6 12 4;b 6 5 4 6;k 7 7 2 2;w 7 6 1 1',
-fire:'r 7 2 2 1;r 6 3 3 2;r 5 5 5 3;r 4 7 8 5;r 5 12 6 1;o 6 8 4 4;y 7 10 2 2',
-sofa:'B 3 5 10 4;b 1 7 2 5;b 13 7 2 5;b 3 9 10 3;B 3 11 10 1;k 2 12 2 2;k 12 12 2 2',
+cup:'w 3 6 8 7;n 3 6 8 2;N 3 7 8 1;l 3 12 8 1;l 11 7 2 1;l 13 8 1 3;l 11 11 2 1;g 2 13 12 1',
+book:'B 3 2 10 12;b 4 3 8 10;B 3 2 2 12;c 6 5 5 1;c 6 7 4 1;w 4 13 10 1',
+street:'r 7 2 2 1;r 5 3 6 1;r 3 4 10 1;r 2 5 12 1;R 2 6 12 1;w 3 7 10 6;l 3 12 10 1;n 7 9 2 4;c 4 8 2 2;c 10 8 2 2',
+sea:'y 10 2 2 1;y 9 3 4 5;b 2 7 12 7;B 2 11 12 3;c 3 9 3 1;c 9 9 3 1;c 6 12 4 1',
+river:'G 2 2 12 12;D 2 12 12 2;D 3 4 2 2;D 11 8 2 2;b 6 2 3 4;b 7 6 3 3;b 8 9 3 3;b 9 12 3 2;c 7 3 1 2;c 8 7 1 1',
+pool:'b 2 4 12 10;c 2 4 12 2;B 2 11 12 3;l 10 1 1 7;l 13 1 1 7;l 11 3 2 1;l 11 5 2 1;w 3 8 3 1;w 7 9 3 1',
+shop:'l 2 12 12 2;w 3 9 10 3;r 3 5 10 4;p 3 5 10 1;w 5 6 1 3;w 8 6 1 3;w 11 6 1 3;d 7 5 2 7',
+school:'w 6 1 4 3;c 7 2 2 1;r 2 4 12 2;R 2 6 12 1;w 2 7 12 7;l 2 13 12 1;c 4 8 2 2;c 10 8 2 2;n 7 10 2 4',
+town:'l 3 2 10 12;g 3 13 10 1;g 3 2 10 1;c 5 4 2 2;c 9 4 2 2;c 5 7 2 2;c 9 7 2 2;r 2 10 12 1;n 6 11 4 2',
+pin:'r 6 2 4 1;r 5 3 6 4;p 5 3 2 2;r 6 7 4 1;R 7 8 2 3;w 7 4 2 2',
+str:'d 2 6 2 4;d 12 6 2 4;g 4 5 2 6;g 10 5 2 6;l 6 7 4 2;w 4 5 1 2;w 10 5 1 2',
+rock:'l 4 4 8 1;l 3 5 10 8;g 3 10 10 3;d 3 12 10 1;g 9 6 3 4;w 5 5 3 1;w 4 6 2 1',
+heart:'r 3 3 4 1;r 9 3 4 1;r 2 4 12 3;r 3 7 10 1;r 4 8 8 1;r 5 9 6 1;r 6 10 4 1;r 7 11 2 1;R 11 5 2 2;R 10 7 2 1;R 9 8 2 1;R 8 9 2 1;R 7 10 2 2;p 3 4 2 1;w 3 5 1 1',
+bulb:'y 5 2 6 1;y 4 3 8 5;y 5 8 6 1;Y 10 4 2 4;Y 9 8 1 1;w 5 4 1 2;l 6 9 4 1;g 6 10 4 1;d 7 11 2 1',
+eye:'w 5 5 6 6;w 3 6 10 4;w 2 7 12 2;b 6 5 4 6;B 6 9 4 2;d 7 7 2 2;w 7 6 1 1',
+fire:'r 7 1 2 2;r 6 3 3 2;r 5 5 5 3;r 4 7 8 5;r 5 12 6 1;o 6 8 4 4;y 7 10 2 3',
+sofa:'B 3 4 10 4;b 3 4 10 1;b 1 7 3 5;b 12 7 3 5;b 4 8 8 3;B 4 10 8 1;B 1 11 14 1;d 2 12 2 2;d 12 12 2 2',
 corn:'y 6 1 4 9;Y 7 2 1 1;Y 9 4 1 1;Y 7 6 1 1;Y 9 8 1 1;G 4 7 3 7;G 9 7 3 7;D 6 9 4 5;G 7 13 2 2',
 yam:'v 4 5 8 1;v 3 6 10 3;v 2 7 12 3;m 3 10 10 1;m 5 11 6 1;w 4 6 2 1;n 1 8 1 1;n 14 8 1 1',
 spinach:'D 7 8 2 6;G 3 3 5 5;G 8 2 5 5;G 4 7 4 4;G 8 7 4 4;D 5 5 2 1;D 9 4 2 1',
@@ -39,7 +39,7 @@ bolt:'y 8 1 4 1;y 7 2 4 1;y 6 3 4 1;y 5 4 4 1;y 4 5 8 2;y 7 7 4 1;y 6 8 4 1;y 5 
 lock:'g 5 2 6 1;g 4 3 2 4;g 10 3 2 4;y 3 7 10 7;Y 3 13 10 1;k 7 9 2 3',
 check:'G 2 8 2 2;G 4 10 2 2;G 6 8 2 2;G 8 6 2 2;G 10 4 2 2;G 12 2 2 2',
 x:'C 3 3 2 2;C 5 5 2 2;C 7 7 2 2;C 9 9 2 2;C 11 11 2 2;C 11 3 2 2;C 9 5 2 2;C 5 9 2 2;C 3 11 2 2',
-spark:'y 7 1 2 3;y 7 11 2 3;y 2 7 3 2;y 11 7 3 2;y 5 5 6 6;w 7 7 2 2;o 6 6 1 1',
+spark:'y 7 2 2 3;y 7 11 2 3;y 2 7 3 2;y 11 7 3 2;y 5 5 6 6;w 7 7 2 2;o 6 6 1 1',
 fish:'b 3 6 8 4;b 4 5 6 6;B 5 9 5 1;b 11 6 1 4;b 12 5 1 6;b 13 4 1 8;k 5 7 1 1;w 4 6 1 1',
 pot:'w 5 2 1 2;w 8 1 1 3;w 11 2 1 2;o 3 5 10 2;l 2 7 12 2;l 3 9 10 2;l 5 11 6 1;b 3 8 10 1',
 plate:'l 4 4 8 8;l 3 5 10 6;l 2 6 12 4;w 5 5 6 6;w 4 6 8 4;g 0 3 1 9;g 15 3 1 9',
@@ -53,9 +53,15 @@ clip:'n 3 2 10 13;w 4 4 8 10;g 6 1 4 2;k 5 6 6 1;k 5 8 6 1;k 5 10 4 1',
 face:'s 4 5 8 8;H 4 3 8 3;H 3 4 1 5;H 12 4 1 5;k 6 8 1 2;k 9 8 1 2;r 7 11 2 1;b 3 13 10 2'
 };
 PX.fish2=PX.fish.replace(/(^|;)b /g,'$1o ').replace(/(^|;)B /g,'$1O ');
-const ICONS=false,KEEP=['x','lock','check'];   // true 로 바꾸면 도트 아이콘이 다시 나타나요
-function px(n,c,o){const s=PX[n];if(!s)return'';if(!ICONS&&!KEEP.includes(n))return'';const P=o?Object.assign({},PAL,o):PAL;
- return`<svg class="px ${c||''}" viewBox="0 0 16 16" aria-hidden="true">`+s.split(';').map(t=>{const[k,x,y,w,h]=t.split(' ');return`<rect fill="${P[k]}" x="${x}" y="${y}" width="${w}" height="${h}"/>`}).join('')+'</svg>'}
+const ICONS=false;   // true 로 바꾸면 아래 목록 밖의 옛 아이콘도 모두 나타나요
+const KEEP=['x','lock','check','chat','compass','sprout','cup','book','street','sea','river','pool','shop','school','town','pin','str','rock','heart','bulb','eye','fire','sofa','spark'],OL='#16202c',_pc={};
+function px(n,c,o){const s=PX[n];if(!s)return'';if(!ICONS&&!KEEP.includes(n))return'';
+ const key=n+(o?JSON.stringify(o):'');let r=_pc[key];
+ if(!r){const P=o?Object.assign({},PAL,o):PAL,g=Array.from({length:16},()=>Array(16).fill(null));
+  s.split(';').forEach(t=>{const[k,x,y,w,h]=t.split(' ').map((v,i)=>i?+v:v);for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)g[j][i]=P[k]});
+  const q=g.map(r=>r.slice());if(n!=='x')for(let j=0;j<16;j++)for(let i=0;i<16;i++)if(!g[j][i]&&[[1,0],[-1,0],[0,1],[0,-1]].some(([a,b])=>g[j+b]&&g[j+b][i+a]))q[j][i]=OL;
+  r='';for(let j=0;j<16;j++){let i=0;while(i<16){const c=q[j][i];if(!c){i++;continue}let e=i;while(e<16&&q[j][e]===c)e++;r+=`<rect fill="${c}" x="${i}" y="${j}" width="${e-i}" height="1"/>`;i=e}}_pc[key]=r}
+ return`<svg class="px ${c||''}" viewBox="0 0 16 16" aria-hidden="true">${r}</svg>`}
 const ic=(m,k,c)=>m[k]?px(m[k],c):'';
 const LOCI={street:'street',sea:'sea',river:'river',pool:'pool',shop:'shop',school:'school',town:'town'};
 const STI={체력:'str',끈기:'rock',다정:'heart',재치:'bulb',눈치:'eye',용기:'fire',rest:'sofa'};
@@ -151,7 +157,7 @@ function drawAct(){
   `<div class="status"><span>${px('coin')} ${mp.money}원</span><span>${px(TI[S.per])}  ${S.pers[S.per]} · ${S.wx}${rain?' (야외 난이도 +1)':''}</span><span class="slots">${[0,1,2].map(i=>`<i class="${i<S.per?'u':''}"></i>`).join('')}</span></div>`+
   (waiting?`<div class="wait">${px('check')} 행동을 골랐어요. 상대를 기다리는 중이에요. <button class="link" onclick="send({type:'cancel'})">선택 취소</button></div>`:'')+
   (S.per>=3?'<div class="wait">해가 졌어요. 이제 하루를 넘기면 돼요.</div>':'')+
-  `<div class="locbar">${locs.map(([k,v])=>{const ok=S.av[k].filter(x=>x===1).length;return`<button class="lt ${k===selLoc?'on':''}" data-l="${k}">${v.n}<small>${ok}</small></button>`}).join('')}</div>`+(S.per>=3?'':`<div id="acts">${actsHTML(selLoc)}</div>`);
+  `<div class="locbar">${locs.map(([k,v])=>{const ok=S.av[k].filter(x=>x===1).length;return`<button class="lt ${k===selLoc?'on':''}" data-l="${k}">${px(LOCI[k]||'pin')}<span>${v.n}</span><small>${ok}</small></button>`}).join('')}</div>`+(S.per>=3?'':`<div id="acts">${actsHTML(selLoc)}</div>`);
  $('daybar').innerHTML=e?'':`<button class="btn sleep ${sl.includes(me)?'on':''}" onclick="send({type:'sleep'})">${sl.includes(me)?px('moon')+' 넘기기 취소':px('moon')+' 하루 넘기기'} <span>${sl.length}/${Object.keys(S.on).length||1}</span>${S.day>S.len?'<small>이 장의 기간이 끝났어요</small>':''}</button>`}
 $('jobs').onclick=e=>{const t=e.target.closest('[data-l]');if(t){selLoc=t.dataset.l;drawAct();return}const b=e.target.closest('.act');if(!b||b.disabled)return;send({type:'go',l:selLoc,i:+b.dataset.i});toast('행동을 골랐어요')};
 
