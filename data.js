@@ -185,3 +185,6 @@ D.loc.town = { n: '읍내', ch: [1, 2, 3], a: [
 ] };
 
 module.exports = D;
+require('./voices')(D); // 반드시 이 줄이 추가되어야 합니다.
+module.exports = D;
+
