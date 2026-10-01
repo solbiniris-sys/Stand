@@ -220,3 +220,7 @@ nav button{min-height:44px;justify-content:center}
 .plan{background:var(--bg2)}.plan select{background:var(--bg2);color:var(--tx);border:3px solid transparent;border-image:var(--fc) 3/3px}
 .hotbar{gap:6px}.hs{flex:1;max-width:none;aspect-ratio:auto;flex-direction:column;padding:4px 2px;background:var(--card);box-shadow:none}
 .hs em{font-size:11px;color:var(--mu)}.hs b{position:static;font-size:16px;color:var(--tx);text-shadow:none}
+
+/* v1.6 — 새 도트 아이콘 (외곽선·3톤 음영) */
+.lt{display:flex;flex-direction:column;align-items:center;justify-content:center}.lt .px{width:32px;height:32px;vertical-align:top}.lt:not(.on) .px{opacity:.8}
+nav button em .px{filter:none}
