@@ -157,12 +157,13 @@ function drawAct(){
   `<div class="status"><span>${px('coin')} ${mp.money}원</span><span>${px(TI[S.per])}  ${S.pers[S.per]} · ${S.wx}${rain?' (야외 난이도 +1)':''}</span><span class="slots">${[0,1,2].map(i=>`<i class="${i<S.per?'u':''}"></i>`).join('')}</span></div>`+
   (waiting?`<div class="wait">${px('check')} 행동을 골랐어요. 상대를 기다리는 중이에요. <button class="link" onclick="send({type:'cancel'})">선택 취소</button></div>`:'')+
   (S.per>=3?'<div class="wait">해가 졌어요. 이제 하루를 넘기면 돼요.</div>':'')+
+  `<div class="plan2"><div class="pt"><b>오늘의 일과</b><small>하루를 넘기면 고른 능력치가 단련돼요</small></div><div class="pchips">${['',...S.stats].map(k=>`<button class="pc ${(mp.plan||'')===k?'on':''}" data-p="${k}">${k?ic(STI,k)+' '+k:'정하지 않음'}</button>`).join('')}</div></div>`+
   `<div class="locbar">${locs.map(([k,v])=>{const ok=S.av[k].filter(x=>x===1).length;return`<button class="lt ${k===selLoc?'on':''}" data-l="${k}">${px(LOCI[k]||'pin')}<span>${v.n}</span><small>${ok}</small></button>`}).join('')}</div>`+(S.per>=3?'':`<div id="acts">${actsHTML(selLoc)}</div>`);
  $('daybar').innerHTML=e?'':`<button class="btn sleep ${sl.includes(me)?'on':''}" onclick="send({type:'sleep'})">${sl.includes(me)?px('moon')+' 넘기기 취소':px('moon')+' 하루 넘기기'} <span>${sl.length}/${Object.keys(S.on).length||1}</span>${S.day>S.len?'<small>이 장의 기간이 끝났어요</small>':''}</button>`}
-$('jobs').onclick=e=>{const t=e.target.closest('[data-l]');if(t){selLoc=t.dataset.l;drawAct();return}const b=e.target.closest('.act');if(!b||b.disabled)return;send({type:'go',l:selLoc,i:+b.dataset.i});toast('행동을 골랐어요')};
+$('jobs').onclick=e=>{const p=e.target.closest('[data-p]');if(p){send({type:'plan',s:p.dataset.p});toast(p.dataset.p?'오늘의 일과를 정했어요':'일과를 비웠어요');return}const t=e.target.closest('[data-l]');if(t){selLoc=t.dataset.l;drawAct();return}const b=e.target.closest('.act');if(!b||b.disabled)return;send({type:'go',l:selLoc,i:+b.dataset.i});toast('행동을 골랐어요')};
 
 function actsHTML(l){const v=S.loc[l],st=(S.av||{})[l];if(!v||!st)return'';const mp=S.p[me],rain=S.wx==='비'&&OUTDOOR.includes(l);
- returnv.a.map((x,i)=>{const s=st[i];if(!s)return'';const rest=x[1]==='rest',lock=s!==1,tired=!rest&&mp.en<x[3],off=lock||tired,dc=x[2]+(rain?1:0);
+ return v.a.map((x,i)=>{const s=st[i];if(!s)return'';const rest=x[1]==='rest',lock=s!==1,tired=!rest&&mp.en<x[3],off=lock||tired,dc=x[2]+(rain?1:0);
    const chips=rest?`<span class="chip g">행동력 +${x[3]} 회복</span>`:`<span class="chip">${ic(STI,x[1])} ${x[1]} ${mp.st[x[1]]+mp.boost}</span><span class="chip">난이도 ${dc}${rain?' (비)':''}</span><span class="chip g">성공 약 ${chance(mp.st[x[1]]+mp.boost,dc)}%</span><span class="chip">행동력 -${x[3]}</span>`;
    return`<button class="act" ${off?'disabled':''} data-i="${i}"><span class="ai">${lock?px('lock'):px(STI[x[1]]||'spark')}</span><span class="am"><b>${x[0]}</b><span class="cr">${lock?`<span class="chip">${s}</span>`:tired?'<span class="chip">행동력이 부족해요</span>':chips}</span></span></button>`}).join('')}
 function openSheet(l){openLoc=l;renderSheet();$('sheet').hidden=false}
@@ -204,10 +205,8 @@ function drawLife(){
      <button class="shp" data-b="snack"><em>${px('snack')}</em>간식<small>20원 · 행동력 +2</small></button>
      <button class="shp" data-b="keep"><em>${px('teddy')}</em>기념품<small>60원 · 유대+2</small></button>
      <button class="shp" data-b="use"><em>${px('spark')}</em>기억 조각<small>5개 · 판정+3</small></button></div>
-   <div class="plan"><label for="plan">${px('clip')} 오늘의 일과 <small>(하루가 넘어가면 단련돼요)</small></label><select id="plan"><option value="">정하지 않음</option>${S.stats.map(k=>`<option ${mp.plan===k?'selected':''}>${k}</option>`).join('')}</select></div>
  </div>
  <div class="hotbar">${slot('fish',iv.fish,'hFish','물고기')}${slot(stage&&!rd?'sprout':ce,iv.crop,'hCrop','채소')}${slot('pot',iv.dish,'hDish','요리')}${slot('coin',mp.money,'hMoney','소지금')}${slot('spark',S.mem,'hMem','기억 조각')}</div>`;
- $('plan').onchange=function(){send({type:'plan',s:this.value})};
  // 늘고 준 만큼 숫자가 떠오른다
  const cur={hFish:iv.fish,hCrop:iv.crop,hDish:iv.dish,hMoney:mp.money,hMem:S.mem,en:mp.en};
  if(prevLife)for(const k in cur){const d=cur[k]-prevLife[k];if(d)pop(k==='en'?document.querySelector('.pl.self'):$(k),(d>0?'+':'')+d,d<0)}
