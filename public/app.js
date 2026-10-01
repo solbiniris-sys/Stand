@@ -53,14 +53,15 @@ clip:'n 3 2 10 13;w 4 4 8 10;g 6 1 4 2;k 5 6 6 1;k 5 8 6 1;k 5 10 4 1',
 face:'s 4 5 8 8;H 4 3 8 3;H 3 4 1 5;H 12 4 1 5;k 6 8 1 2;k 9 8 1 2;r 7 11 2 1;b 3 13 10 2'
 };
 PX.fish2=PX.fish.replace(/(^|;)b /g,'$1o ').replace(/(^|;)B /g,'$1O ');
-function px(n,c,o){const s=PX[n];if(!s)return'';const P=o?Object.assign({},PAL,o):PAL;
+const ICONS=false,KEEP=['x','lock','check'];   // true 로 바꾸면 도트 아이콘이 다시 나타나요
+function px(n,c,o){const s=PX[n];if(!s)return'';if(!ICONS&&!KEEP.includes(n))return'';const P=o?Object.assign({},PAL,o):PAL;
  return`<svg class="px ${c||''}" viewBox="0 0 16 16" aria-hidden="true">`+s.split(';').map(t=>{const[k,x,y,w,h]=t.split(' ');return`<rect fill="${P[k]}" x="${x}" y="${y}" width="${w}" height="${h}"/>`}).join('')+'</svg>'}
 const ic=(m,k,c)=>m[k]?px(m[k],c):'';
 const LOCI={street:'street',sea:'sea',river:'river',pool:'pool',shop:'shop',school:'school',town:'town'};
 const STI={체력:'str',끈기:'rock',다정:'heart',재치:'bulb',눈치:'eye',용기:'fire',rest:'sofa'};
 const CROPI={옥수수:'corn',고구마:'yam',시금치:'spinach',딸기:'berry'};
 const TI=['sunrise','sun','dusk','moon'],NAVI={rp:'chat',act:'compass',life:'sprout',ooc:'cup',me:'book'};
-let ws,S,me,I={},ROOM,PW,dead=0,busy=0,pend,tab='rp',RQ=[],A=null,openLoc=null,prevLife=null,tt;
+let selLoc=null,ws,S,me,I={},ROOM,PW,dead=0,busy=0,pend,tab='rp',RQ=[],A=null,openLoc=null,prevLife=null,tt;
 const last={rp:0,ooc:0},TABS=['rp','act','life','ooc','me'];
 const $=i=>document.getElementById(i),send=o=>{if(ws&&ws.readyState===1)ws.send(JSON.stringify(o))};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -127,7 +128,7 @@ function draw(){
  $('chn').textContent=S.chs[S.ch].name.split(' - ')[0];
  $('dt').innerHTML=`${S.month} ${S.day}일 · ${px(TI[S.per])} ${S.pers[S.per]} · ${S.wx}`;
  $('stg').textContent=S.stage+' '+S.bond+'/'+S.cap;$('bond').style.width=S.bond+'%';
- $('en').innerHTML=px('bolt')+' '+Math.max(0,mp.en)+'/6';
+ $('en').textContent='행동력 '+Math.max(0,mp.en)+'/6';
  const lastI=f=>{for(let i=S.log.length-1;i>=0;i--)if(f(S.log[i]))return S.log[i].i;return -1},cnt={rp:lastI(RPK),ooc:lastI(OK)};
  document.querySelectorAll('nav button').forEach(b=>{const t=b.dataset.t;b.classList.toggle('on',t===tab);$('p-'+t).hidden=t!==tab;if(t===tab&&cnt[t]!=null)last[t]=cnt[t];
   b.querySelector('i').classList.toggle('d',(t!==tab&&cnt[t]!=null&&cnt[t]>last[t])||(t==='act'&&tab!=='act'&&!!S.evd&&(S.evd.who==='b'||S.evd.who===me[0])))});
@@ -145,15 +146,19 @@ function drawAct(){
  const mp=S.p[me],e=S.evd,mineEv=e&&(e.who==='b'||e.who===me[0]),sl=S.sl||[],waiting=S.pick[me];
  $('evbox').innerHTML=e?`<div class="evc"><b>${e.title}</b>${mineEv?e.c.map((c,i)=>`<button class="btn ghost choice" ${c[3]?'disabled':''} onclick="send({type:'pick',i:${i}})"><span>${c[3]?px('lock')+' ':''}${c[0]}</span><small>${ic(STI,c[1])} ${c[1]} · 난이도 ${c[2]}${c[3]?'':' · 성공 약 '+chance(mp.st[c[1]]+mp.boost,c[2])+'%'}</small></button>`).join(''):'<small>상대가 선택할 차례예요. 그 사이 장면을 이어가 주세요.</small><button class="btn ghost choice" onclick="send({type:\'dismiss\'})">상대가 자리에 없어요<small>접속 중이면 10분 뒤에 넘길 수 있어요</small></button>'}</div>`:'';
  const rain=S.wx==='비';
+ const locs=Object.entries(S.loc).filter(([k])=>(S.av||{})[k]);if(!locs.some(([k])=>k===selLoc))selLoc=(locs.find(([k])=>S.av[k].some(x=>x===1))||locs[0]||[])[0];
  $('jobs').innerHTML=e?'':
   `<div class="status"><span>${px('coin')} ${mp.money}원</span><span>${px(TI[S.per])}  ${S.pers[S.per]} · ${S.wx}${rain?' (야외 난이도 +1)':''}</span><span class="slots">${[0,1,2].map(i=>`<i class="${i<S.per?'u':''}"></i>`).join('')}</span></div>`+
   (waiting?`<div class="wait">${px('check')} 행동을 골랐어요. 상대를 기다리는 중이에요. <button class="link" onclick="send({type:'cancel'})">선택 취소</button></div>`:'')+
   (S.per>=3?'<div class="wait">해가 졌어요. 이제 하루를 넘기면 돼요.</div>':'')+
-  `<div id="map">`+Object.entries(S.loc).filter(([k])=>(S.av||{})[k]).map(([k,v])=>{const st=S.av[k],ok=st.filter(x=>x===1).length;
-   return`<button class="tile" data-l="${k}" ${S.per>=3?'disabled':''}><span class="ic">${px(LOCI[k]||'pin')}</span><b>${v.n}</b><small>${ok?ok+'가지 할 수 있어요':'지금은 잠겨 있어요'}</small></button>`}).join('')+`</div>`;
+  `<div class="locbar">${locs.map(([k,v])=>{const ok=S.av[k].filter(x=>x===1).length;return`<button class="lt ${k===selLoc?'on':''}" data-l="${k}">${v.n}<small>${ok}</small></button>`}).join('')}</div>`+(S.per>=3?'':`<div id="acts">${actsHTML(selLoc)}</div>`);
  $('daybar').innerHTML=e?'':`<button class="btn sleep ${sl.includes(me)?'on':''}" onclick="send({type:'sleep'})">${sl.includes(me)?px('moon')+' 넘기기 취소':px('moon')+' 하루 넘기기'} <span>${sl.length}/${Object.keys(S.on).length||1}</span>${S.day>S.len?'<small>이 장의 기간이 끝났어요</small>':''}</button>`}
-$('jobs').onclick=e=>{const b=e.target.closest('[data-l]');if(b&&!b.disabled)openSheet(b.dataset.l)};
+$('jobs').onclick=e=>{const t=e.target.closest('[data-l]');if(t){selLoc=t.dataset.l;drawAct();return}const b=e.target.closest('.act');if(!b||b.disabled)return;send({type:'go',l:selLoc,i:+b.dataset.i});toast('행동을 골랐어요')};
 
+function actsHTML(l){const v=S.loc[l],st=(S.av||{})[l];if(!v||!st)return'';const mp=S.p[me],rain=S.wx==='비'&&OUTDOOR.includes(l);
+ returnv.a.map((x,i)=>{const s=st[i];if(!s)return'';const rest=x[1]==='rest',lock=s!==1,tired=!rest&&mp.en<x[3],off=lock||tired,dc=x[2]+(rain?1:0);
+   const chips=rest?`<span class="chip g">행동력 +${x[3]} 회복</span>`:`<span class="chip">${ic(STI,x[1])} ${x[1]} ${mp.st[x[1]]+mp.boost}</span><span class="chip">난이도 ${dc}${rain?' (비)':''}</span><span class="chip g">성공 약 ${chance(mp.st[x[1]]+mp.boost,dc)}%</span><span class="chip">행동력 -${x[3]}</span>`;
+   return`<button class="act" ${off?'disabled':''} data-i="${i}"><span class="ai">${lock?px('lock'):px(STI[x[1]]||'spark')}</span><span class="am"><b>${x[0]}</b><span class="cr">${lock?`<span class="chip">${s}</span>`:tired?'<span class="chip">행동력이 부족해요</span>':chips}</span></span></button>`}).join('')}
 function openSheet(l){openLoc=l;renderSheet();$('sheet').hidden=false}
 function closeSheet(){openLoc=null;$('sheet').hidden=true}
 $('sheet').onclick=e=>{if(e.target===$('sheet'))closeSheet()};
@@ -162,14 +167,14 @@ function renderSheet(){
  const mp=S.p[me],rain=S.wx==='비'&&OUTDOOR.includes(openLoc);
  $('sh').innerHTML=`<div class="sh-top"><h2>${px(LOCI[openLoc]||'pin')} ${v.n}</h2><button class="x" onclick="closeSheet()" aria-label="닫기">${px('x')}</button></div>`+
   v.a.map((x,i)=>{const s=st[i];if(!s)return'';const rest=x[1]==='rest',lock=s!==1,tired=!rest&&mp.en<x[3],off=lock||tired,dc=x[2]+(rain?1:0);
-   const chips=rest?`<span class="chip g">${px('bolt')} +${x[3]} 회복</span>`:`<span class="chip">${ic(STI,x[1])} ${x[1]} ${mp.st[x[1]]+mp.boost}</span><span class="chip">난이도 ${dc}${rain?px('rain'):''}</span><span class="chip g">성공 약 ${chance(mp.st[x[1]]+mp.boost,dc)}%</span><span class="chip">${px('bolt')} -${x[3]}</span>`;
+   const chips=rest?`<span class="chip g">행동력 +${x[3]} 회복</span>`:`<span class="chip">${ic(STI,x[1])} ${x[1]} ${mp.st[x[1]]+mp.boost}</span><span class="chip">난이도 ${dc}${rain?' (비)':''}</span><span class="chip g">성공 약 ${chance(mp.st[x[1]]+mp.boost,dc)}%</span><span class="chip">행동력 -${x[3]}</span>`;
    return`<button class="act" ${off?'disabled':''} data-i="${i}"><span class="ai">${lock?px('lock'):px(STI[x[1]]||'spark')}</span><span class="am"><b>${x[0]}</b><span class="cr">${lock?`<span class="chip">${s}</span>`:tired?'<span class="chip">행동력이 부족해요</span>':chips}</span></span></button>`}).join('');
 }
 $('sh').onclick=e=>{const b=e.target.closest('.act');if(!b||b.disabled)return;const l=openLoc;closeSheet();send({type:'go',l,i:+b.dataset.i});toast('행동을 골랐어요')};
 
 /* ───────── 골목살림: 미니게임 탭 ───────── */
 const SKY=[8,34,64,88];
-function slot(ic,n,id,lb){return`<div class="hs" id="${id}" title="${lb}"><em>${px(ic)}</em><b>${n}</b></div>`}
+function slot(ic,n,id,lb){return`<div class="hs" id="${id}" title="${lb}"><em>${ICONS?px(ic):lb}</em><b>${n}</b></div>`}
 function drawLife(){
  const mp=S.p[me],iv=S.inv||{fish:0,crop:0,dish:0},cr=S.crop,grown=cr?S.day-cr:0,rd=cr&&grown>=S.cd,ce=CROPI[S.cn]||'sprout',busyEv=!!S.evd,other=me==='nagi'?'junya':'nagi',g=iv.fish*12+iv.crop*8;
  const stage=!cr?'':rd?ce:grown*3>=S.cd*2?'leaf':'sprout';
@@ -177,20 +182,20 @@ function drawLife(){
  $('life').innerHTML=
  `<div class="farm t${S.per}${S.wx==='비'?' rain':''}">
    <div class="sky"><span class="sun" style="left:${SKY[S.per]||50}%">${px(TI[S.per]||'sun')}</span><span class="wx">${S.wx==='비'?px('rain')+' 비':S.wx==='흐림'?px('cloud')+' 흐림':S.wx==='바람'?px('wind')+' 바람':px('sun')+' 맑음'}</span><span class="dy">${S.month} ${S.day}일</span></div>
-   <div class="ppl">${['nagi','junya'].map(k=>`<div class="pl ${S.on[k]?'':'off'} ${k===me?'self':''}"><span class="av">${px('face','',{H:k==='nagi'?'#3b4f9e':'#6b3f22'})}</span><div><b>${S.names[k]}</b><small>${px('bolt')} ${S.p[k].en} · ${px('coin')} ${S.p[k].money}</small></div></div>`).join('')}</div>
+   <div class="ppl">${['nagi','junya'].map(k=>`<div class="pl ${S.on[k]?'':'off'} ${k===me?'self':''}"><div><b>${S.names[k]}</b><small>행동력 ${S.p[k].en} · ${S.p[k].money}원</small></div></div>`).join('')}</div>
    ${busyEv?'<div class="wait">장면이 진행 중이에요. 행동 탭에서 먼저 마무리해 주세요.</div>':''}
-   <button class="zone pond" id="zPond" ${dis}><span class="wave"></span><span class="fsh f1">${px('fish')}</span><span class="fsh f2">${px('fish2')}</span><span class="lb"><b>${px('fish')} 연못 낚시</b><small>${px('bolt')}1 · 타이밍을 맞춰요</small></span></button>
-   <div class="zone field"><div class="plots" id="zField">${[0,1,2,3,4,5].map(i=>`<button class="plot ${cr?'':'empty'} ${rd?'ready':''}" ${dis} aria-label="텃밭">${stage?px(stage):''}</button>`).join('')}</div>
-     <div class="lb"><b>${px('sprout')} 골목 텃밭</b><small>${!cr?S.cn+' 심기 · '+px('bolt')+'1':rd?S.cn+' 수확! · '+px('bolt')+'1':S.cn+' 자라는 중 '+grown+'/'+S.cd+'일'}</small>${cr&&!rd?`<span class="grow"><i style="width:${Math.min(100,grown/S.cd*100)}%"></i></span>`:''}</div></div>
+   <button class="zone pond" id="zPond" ${dis}><span class="wave"></span><span class="fsh f1">${px('fish')}</span><span class="fsh f2">${px('fish2')}</span><span class="lb"><b>${px('fish')} 연못 낚시</b><small>행동력 1 · 타이밍을 맞춰요</small></span></button>
+   <div class="zone field"><div class="plots" id="zField">${[0,1,2,3,4,5].map(i=>`<button class="plot ${cr?'':'empty'} ${rd?'ready':''}" ${dis} aria-label="텃밭">${!cr?'':rd?'수확!':'새싹'}</button>`).join('')}</div>
+     <div class="lb"><b>${px('sprout')} 골목 텃밭</b><small>${!cr?S.cn+' 심기 · 행동력 1':rd?S.cn+' 수확! · 행동력 1':S.cn+' 자라는 중 '+grown+'/'+S.cd+'일'}</small>${cr&&!rd?`<span class="grow"><i style="width:${Math.min(100,grown/S.cd*100)}%"></i></span>`:''}</div></div>
    <div class="stations">
-     <button class="st-b" data-a="cook"><em>${px('pot')}</em><b>부엌</b><small>${px('fish')}+${px(ce)} → ${px('pot')}</small></button>
+     <button class="st-b" data-a="cook"><em>${px('pot')}</em><b>부엌</b><small>물고기+${S.cn} → 요리</small></button>
      <button class="st-b" data-a="serve"><em>${px('plate')}</em><b>대접</b><small>${S.names[other]}에게 · 유대+2</small></button>
      <button class="st-b" data-a="sell"><em>${px('basket')}</em><b>장터</b><small>${g?'모두 팔면 +'+g+'원':'팔 물건 없음'}</small></button>
-     <button class="st-b" data-a="assist"><em>${px('hands')}</em><b>거들기</b><small>${px('bolt')}1 · 상대 판정+2</small></button>
+     <button class="st-b" data-a="assist"><em>${px('hands')}</em><b>거들기</b><small>행동력 1 · 상대 판정+2</small></button>
    </div>
    <div class="shop"><b>${px('store')} 골목 가게</b>
      <button class="shp" data-b="gift"><em>${px('gift')}</em>선물<small>30원 · 유대+3</small></button>
-     <button class="shp" data-b="snack"><em>${px('snack')}</em>간식<small>20원 · ${px('bolt')}+2</small></button>
+     <button class="shp" data-b="snack"><em>${px('snack')}</em>간식<small>20원 · 행동력 +2</small></button>
      <button class="shp" data-b="keep"><em>${px('teddy')}</em>기념품<small>60원 · 유대+2</small></button>
      <button class="shp" data-b="use"><em>${px('spark')}</em>기억 조각<small>5개 · 판정+3</small></button></div>
    <div class="plan"><label for="plan">${px('clip')} 오늘의 일과 <small>(하루가 넘어가면 단련돼요)</small></label><select id="plan"><option value="">정하지 않음</option>${S.stats.map(k=>`<option ${mp.plan===k?'selected':''}>${k}</option>`).join('')}</select></div>
