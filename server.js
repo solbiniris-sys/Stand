@@ -10,13 +10,35 @@ const app = express(); app.use(express.static(__dirname + '/public'));
 const srv = http.createServer(app);
 const wss = new WebSocketServer({ server: srv, maxPayload: 16 * 1024 }); // 기본값(100MB) 방지
 
-/* ── 저장 ── */
-const FILE = (process.env.DATA_DIR || __dirname) + '/save.json';
+/* ── 저장 (Supabase 연동) ── */
+const { createClient } = require('@supabase/supabase-js');
+const supabaseUrl = process.env.SUPABASE_URL || '';
+const supabaseKey = process.env.SUPABASE_ANON_KEY || '';
+const supabase = supabaseUrl ? createClient(supabaseUrl, supabaseKey) : null;
+
 const R = Object.create(null); // 세션 코드가 '__proto__' 등이어도 안전하도록 프로토타입 없는 객체 사용
 let timer;
-try { Object.assign(R, JSON.parse(fs.readFileSync(FILE))); } catch {}
-const save = () => { clearTimeout(timer); timer = setTimeout(() => fs.writeFile(FILE + '.tmp', JSON.stringify(R), () => fs.rename(FILE + '.tmp', FILE, () => {})), 400); };
-const flush = () => { try { fs.writeFileSync(FILE, JSON.stringify(R)); } catch {} process.exit(0); };
+
+// 서버 켜질 때 Supabase에서 데이터 불러오기
+if (supabase) {
+  supabase.from('saves').select('data').eq('id', 'same_alley_save').single().then(({ data }) => {
+    if (data && data.data) {
+      Object.assign(R, data.data);
+      for (const c in R) migrate(R[c]);
+    }
+  }).catch(e => console.error("Supabase 로드 오류:", e.message));
+}
+
+// 데이터 변경 시 Supabase에 저장하기
+const save = () => { 
+  clearTimeout(timer); 
+  timer = setTimeout(() => {
+    if (supabase) {
+      supabase.from('saves').upsert({ id: 'same_alley_save', data: R }).catch(e => console.error(e));
+    }
+  }, 400); 
+};
+const flush = () => { save(); setTimeout(() => process.exit(0), 1000); };
 process.on('SIGTERM', flush); process.on('SIGINT', flush);
 process.on('uncaughtException', e => console.error('uncaught', e)); // 이상한 메시지 하나로 서버 전체가 죽지 않도록
 
